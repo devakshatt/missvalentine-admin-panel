@@ -1,7 +1,9 @@
 @import 'utilities/ec-variables';
 @import 'utilities/ec-mixins';
 
-@import "bootstrap/scss/bootstrap.scss";
+@import 'node_modules/bootstrap/scss/functions';
+@import 'node_modules/bootstrap/scss/variables';
+@import 'node_modules/bootstrap/scss/mixins';
 
 @import 'pages/ec-category';
 @import 'pages/ec-error';
@@ -18,7 +20,7 @@
 @import 'components/ec-position';
 @import 'components/ec-overflow';
 @import 'components/ec-reboot';
-@import 'components/ec-badge'; 
+@import 'components/ec-badge';
 @import 'components/ec-bredcrumb';
 @import 'components/ec-buttons';
 @import 'components/ec-card';
@@ -47,4 +49,3 @@
 @import 'components/ec-widgets';
 @import 'components/ec-compact-spacing';
 @import 'components/ec-optionswitcher';
-
