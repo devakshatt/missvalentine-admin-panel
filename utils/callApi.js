@@ -6,7 +6,7 @@ export const setAuthHeaderAxios = token => {
 }
 export const callApi = async ({ method = 'get', url, data, options }) => {
     try {
-        console.log('http', data);
+        console.log('Making https request', method, url, data, options);
         const auth = null;
         let headers = {
             Accept: 'application/json',
@@ -30,12 +30,12 @@ export const callApi = async ({ method = 'get', url, data, options }) => {
                 return response;
             })
             .catch((err) => {
-                console.log(err);
+                console.log(JSON.stringify(err, null, 2));
                 return err;
             });
         return res;
     } catch (err) {
-        console.log(err);
+        console.log(JSON.stringify(err, null, 2));
         return err;
     }
 };

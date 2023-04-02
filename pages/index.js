@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../services/authApi";
 import { setLoginTrue } from "../store/authSlice";
 import { useRouter } from 'next/router'
+import { toast } from 'react-toastify';
 
 export default function Login() {
     const router = useRouter()
@@ -17,22 +18,55 @@ export default function Login() {
             : setPassword(event.target.value);
     };
 
-    const submitHandler = async () => {
-        const { data } = await login(
-            email,
-            password)
-        console.log("Authent pre", data)
+    // const handleLogin = async (e) => {
+    //     try {
+    //       e.preventDefault()
+    //       //   if (!EmailReg.test(email)) {
+    //       //     toast.error('Please enter a valid email!')
+    //       //     return
+    //       //   }
+    //       const dataToSend = { email, password }
+    //       const response = await callApi({
+    //         method: 'post',
+    //         url: '/auth/login',
+    //         data: dataToSend,
+    //       })
+    //       if (response && response.status == 200) {
+    //         toast.success('Welcome👌')
+    //         const userAuthData = {
+    //           user: response.data.user,
+    //           authToken: response.data.token,
+    //         }
+    //         dispatch(setUserAuthAction(userAuthData))
+    //         closeModal()
+    //         router.push('/shop/all')
+    //       } else {
+    //         toast.error('Invalid Email or password!🤯')
+    //       }
+    //     } catch (error) {
+    //       console.log(error)
+    //       toast.error("Could'nt Login right now! 🤯")
+    //     }
+    //   }
+    const submitHandler = async (e) => {
+        try {
+            e.preventDefault()
+            const { data } = await login(
+                email,
+                password)
+            console.log("Authent pre", data)
 
-        if (data && data.token) {
-            console.log("Authent", data)
-            dispatch(setLoginTrue({ user: data.user, token: data.token }));
-            router.push("/dashboard");
-            // notification.success({ message: 'Sign in Successfully' });
-            // router.push('/admin/dashboard');
-        } else {
-            // router.push('/');
+            if (data && data.token) {
+                console.log("Authent", data)
+                dispatch(setLoginTrue({ user: data.user, token: data.token }));
+                router.push("/dashboard");
+                toasr.success('Welcome👌')
+            } else {
+                toast.error('Invalid Email or password!🤯')
+            }
+        } catch (error) {
+            toast.error("Could'nt Login right now! 🤯")
         }
-        // else notification.error({ message: 'Invalid user or password' });
 
     };
 

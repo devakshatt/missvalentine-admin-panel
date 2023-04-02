@@ -1,10 +1,30 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { HYDRATE } from "next-redux-wrapper";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { getAllCategories, getAllSubcategories } from "../services/adminApi";
 
 // Initial state
 const initialState = {
     allcategory: [],
+    allsubcategory: [],
 };
+
+export const fetchAllCategory = createAsyncThunk(
+    'category/all',
+    async () => {
+        console.log('Fetching all categories')
+        const response = await getAllCategories();
+        return response.data
+    }
+)
+
+
+export const fetchAllSubCategory = createAsyncThunk(
+    'subcategory/all',
+    async () => {
+        console.log('Fetching all subcategories')
+        const response = await getAllSubcategories();
+        return response.data
+    }
+)
 
 // Actual Slice
 export const slice = createSlice({
@@ -15,20 +35,24 @@ export const slice = createSlice({
         setAllCategory(state, action) {
             state.allcategory = action.payload;
         },
-    },
-
-    // Special reducer for hydrating the state. Special case for next-redux-wrapper
-    extraReducers: {
-        [HYDRATE]: (state, action) => {
-            return {
-                ...state,
-                ...action.payload.category,
-            };
+        setAllSubcategory(state, action) {
+            state.allsubcategory = action.payload;
         },
+    },
+    // Special reducer for hydrating the state. Special case for next-redux-wrapper
+    extraReducers: (builder) => {
+        builder.addCase(fetchAllCategory.fulfilled, (state, action) => {
+            // Add user to the state array
+            state.allcategory = action.payload.data;
+        });
+        builder.addCase(fetchAllSubCategory.fulfilled, (state, action) => {
+            // Add user to the state array
+            state.allsubcategory = action.payload.data;
+        });
     },
 });
 
-export const { setAllCategory } = slice.actions;
+export const { setAllCategory, setAllSubcategory } = slice.actions;
 
 export const selectAllCategory = (state) => state.category.allcategory;
 

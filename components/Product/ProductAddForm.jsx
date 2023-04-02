@@ -1,13 +1,8 @@
 import Image from 'next/image'
 import { useState } from 'react';
-import { selectAllCategory, setAllCategory } from "../../store/categorySlice";
+import { selectAllCategory, setAllSubcategory } from "../../store/categorySlice";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    createProduct,
-    getAllCategories,
-    getProduct,
-    deleteProduct,
-} from '../../services/adminApi';
+
 const AddProductContainer = () => {
     const dispatch = useDispatch();
     const [inputData, setInputData] = useState({
@@ -28,8 +23,6 @@ const AddProductContainer = () => {
     const [subCategories, setSubCategories] = useState([]);
 
     const allCategoryState = useSelector(selectAllCategory);
-
-    console.log(allCategoryState)
 
     return (
         <div className="row">
@@ -276,19 +269,19 @@ const AddProductContainer = () => {
                                                 id="Categories"
                                                 className="form-select"
                                             >
-                                                <optgroup label="Fashion">
-                                                    <option value="t-shirt">T-shirt</option>
-                                                    <option value="dress">Dress</option>
-                                                </optgroup>
-                                                <optgroup label="Furniture">
-                                                    <option value="table">Table</option>
-                                                    <option value="sofa">Sofa</option>
-                                                </optgroup>
-                                                <optgroup label="Electronic">
-                                                    <option value="phone">I Phone</option>
-                                                    <option value="laptop">Laptop</option>
-                                                </optgroup>
+                                                {allCategoryState?.map((cate, index) => (
+                                                    <option
+                                                        key={index}
+                                                        value={cate._id}
+                                                        name={cate.name}
+                                                    // onClick={() => handleCategoryChange(cate)}
+                                                    >
+                                                        {cate.name}
+                                                    </option>
+                                                ))}
+
                                             </select>
+
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label">
@@ -299,18 +292,16 @@ const AddProductContainer = () => {
                                                 id="Categories"
                                                 className="form-select"
                                             >
-                                                <optgroup label="Fashion">
-                                                    <option value="t-shirt">T-shirt</option>
-                                                    <option value="dress">Dress</option>
-                                                </optgroup>
-                                                <optgroup label="Furniture">
-                                                    <option value="table">Table</option>
-                                                    <option value="sofa">Sofa</option>
-                                                </optgroup>
-                                                <optgroup label="Electronic">
-                                                    <option value="phone">I Phone</option>
-                                                    <option value="laptop">Laptop</option>
-                                                </optgroup>
+                                                {allCategoryState && allCategoryState.length > 0 && allCategoryState[0].subcategories?.map((cate, index) => (
+                                                    <option
+                                                        key={`select sub category ${index}`}
+                                                        value={cate._id}
+                                                        name={cate.name}
+                                                    // onClick={() => handleCategoryChange(cate)}
+                                                    >
+                                                        {cate.name}
+                                                    </option>
+                                                ))}
                                             </select>
                                         </div>
 
