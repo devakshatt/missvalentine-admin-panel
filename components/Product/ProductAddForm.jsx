@@ -1,29 +1,37 @@
 import Image from 'next/image'
 import { useState } from 'react';
+import Select from 'react-select';
 import { selectAllCategory, setAllSubcategory } from "../../store/categorySlice";
 import { useDispatch, useSelector } from "react-redux";
+import { allColours } from '../../utils/helperFunctions';
+import ColorSelector from './ColorSelector';
 
 const AddProductContainer = () => {
     const dispatch = useDispatch();
-    const [inputData, setInputData] = useState({
-        name: '',
-        shortDesc: '',
-        description: '',
-        category: '',
-        subCategories: [],
-        price: '',
-        sizes: [],
-        colors: [],
-        hidden: false,
-        images: [],
-        errors: '',
-    });
+    //data
+    const allCategoryState = useSelector(selectAllCategory);
+
+    //states
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedSubcategory, setSelectedSubcategory] = useState("");
+
+
     const [fileList, setFileList] = useState([]);
     const [categories, setCategories] = useState([]);
     const [subCategories, setSubCategories] = useState([]);
 
-    const allCategoryState = useSelector(selectAllCategory);
+    console.log('Testing', allCategoryState)
+    console.log('Testing2', selectedCategory, allCategoryState.find((cate) => cate._id == selectedCategory))
 
+    const handleCategoryChange = (event) => {
+        setSelectedCategory(event.target.value)
+    }
+    const handleSubcategoryChange = (event) => {
+        setSelectedSubcategory(event.target.value)
+    }
+    const handleSubmit = (e) => {
+        console.log('Testing selectedCategory', selectedCategory)
+    }
     return (
         <div className="row">
             <div className="col-12">
@@ -239,7 +247,7 @@ const AddProductContainer = () => {
                             </div>
                             <div className="col-lg-8">
                                 <div className="ec-vendor-upload-detail">
-                                    <form className="row g-3">
+                                    <div className="row g-3">
                                         <div className="col-md-6">
                                             <label htmlFor="productname" className="form-label">
                                                 Product name (optional)
@@ -268,13 +276,20 @@ const AddProductContainer = () => {
                                                 name="categories"
                                                 id="Categories"
                                                 className="form-select"
+                                                onChange={handleCategoryChange}
+                                                value={selectedCategory}
                                             >
+                                                <option
+                                                    value=""
+                                                    disabled
+                                                >
+                                                    Please Select Category
+                                                </option>
                                                 {allCategoryState?.map((cate, index) => (
                                                     <option
                                                         key={index}
                                                         value={cate._id}
                                                         name={cate.name}
-                                                    // onClick={() => handleCategoryChange(cate)}
                                                     >
                                                         {cate.name}
                                                     </option>
@@ -291,8 +306,16 @@ const AddProductContainer = () => {
                                                 name="categories"
                                                 id="Categories"
                                                 className="form-select"
+                                                onChange={handleSubcategoryChange}
+                                                value={selectedSubcategory}
                                             >
-                                                {allCategoryState && allCategoryState.length > 0 && allCategoryState[0].subcategories?.map((cate, index) => (
+                                                <option
+                                                    value=""
+                                                    disabled
+                                                >
+                                                    Please Select Category First
+                                                </option>
+                                                {selectedCategory && allCategoryState.find((cate) => cate._id == selectedCategory).subcategories?.map((cate, index) => (
                                                     <option
                                                         key={`select sub category ${index}`}
                                                         value={cate._id}
@@ -306,35 +329,9 @@ const AddProductContainer = () => {
                                         </div>
 
                                         <div className="col-md-4 mb-25">
+
                                             <label className="form-label">Colors</label>
-                                            <input
-                                                type="color"
-                                                className="form-control form-control-color"
-                                                id="exampleColorInput1"
-                                                defaultValue="#ff6191"
-                                                title="Choose your color"
-                                            />
-                                            <input
-                                                type="color"
-                                                className="form-control form-control-color"
-                                                id="exampleColorInput2"
-                                                defaultValue="#33317d"
-                                                title="Choose your color"
-                                            />
-                                            <input
-                                                type="color"
-                                                className="form-control form-control-color"
-                                                id="exampleColorInput3"
-                                                defaultValue="#56d4b7"
-                                                title="Choose your color"
-                                            />
-                                            <input
-                                                type="color"
-                                                className="form-control form-control-color"
-                                                id="exampleColorInput4"
-                                                defaultValue="#009688"
-                                                title="Choose your color"
-                                            />
+                                            <ColorSelector />
                                         </div>
                                         <div className="col-md-8 mb-25">
                                             <label className="form-label">Size</label>
@@ -435,11 +432,11 @@ const AddProductContainer = () => {
                                             />
                                         </div> */}
                                         <div className="col-md-12">
-                                            <button type="submit" className="btn btn-primary">
+                                            <button onClick={handleSubmit} type="submit" className="btn btn-primary">
                                                 Submit
                                             </button>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
