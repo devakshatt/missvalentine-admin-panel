@@ -1,6 +1,6 @@
 import { callApi } from '../utils/callApi';
 
-const _id = '601bef27d29ac85814619ba3';
+const _id = '631b604aaaf9040b8143ebcf';
 
 export const getAllCategories = () =>
     callApi({

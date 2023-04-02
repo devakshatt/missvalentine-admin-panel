@@ -110,9 +110,9 @@ export default function Sidebar() {
                             <div className="collapse show">
                                 <ul className="sub-menu" id="products" data-parent="#sidebar-menu">
                                     <li className="active">
-                                        <a className="sidenav-item-link" href="product-add.html">
-                                            <span className="nav-text">Add Product</span>
-                                        </a>
+                                        <div className="sidenav-item-link" href="product-add.html">
+                                            <span data-url="product-add" onClick={() => handleNavigate("/product-add")} className="nav-text">Add Product</span>
+                                        </div>
                                     </li>
                                     <li className="">
                                         <a className="sidenav-item-link" href="product-list.html">

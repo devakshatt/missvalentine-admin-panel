@@ -15,7 +15,7 @@ const colourStyles = {
                 : isSelected
                     ? data.color
                     : isFocused
-                        ? color.alpha(0.1).css()
+                        ? color.alpha(0.5).css()
                         : undefined,
             color: isDisabled
                 ? '#ccc'
@@ -23,15 +23,16 @@ const colourStyles = {
                     ? chroma.contrast(color, 'white') > 2
                         ? 'white'
                         : 'black'
-                    : data.color,
+                    : chroma.contrast(color, 'white') < 2.5 ? color.darken(2).hex()
+                        : data.color,
             cursor: isDisabled ? 'not-allowed' : 'default',
 
             ':active': {
                 ...styles[':active'],
                 backgroundColor: !isDisabled
                     ? isSelected
-                        ? data.color
-                        : color.alpha(0.3).css()
+                        ? color.darken(2).hex()
+                        : color.alpha(0.5).css()
                     : undefined,
             },
         };
@@ -40,29 +41,33 @@ const colourStyles = {
         const color = chroma(data.color);
         return {
             ...styles,
-            backgroundColor: color.alpha(0.1).css(),
+            backgroundColor: color.alpha(0.5).css(),
         };
     },
     multiValueLabel: (styles, { data }) => ({
         ...styles,
-        color: data.color,
+        color: chroma(data.color).darken(2).hex(),
     }),
     multiValueRemove: (styles, { data }) => ({
         ...styles,
-        color: data.color,
+        color: chroma(data.color).darken(2).hex(),
         ':hover': {
-            backgroundColor: data.color,
+            backgroundColor: chroma(data.color).darken(2).hex(),
             color: 'white',
         },
     }),
 };
 
-export default () => (
+const ColorSelector = (props) => (
     <Select
         closeMenuOnSelect={false}
-        defaultValue={[]}
+        defaultValue={props.defaultValue}
         isMulti
+        components={props.components}
         options={colourOptions}
         styles={colourStyles}
+        value={props.value}
+        onChange={props.onChange}
     />
 );
+export default ColorSelector;

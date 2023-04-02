@@ -4,6 +4,7 @@ import { login } from "../services/authApi";
 import { setLoginTrue } from "../store/authSlice";
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify';
+import { setAuthHeaderAxios } from "../utils/callApi";
 
 export default function Login() {
     const router = useRouter()
@@ -60,7 +61,8 @@ export default function Login() {
                 console.log("Authent", data)
                 dispatch(setLoginTrue({ user: data.user, token: data.token }));
                 router.push("/dashboard");
-                toasr.success('Welcome👌')
+                setAuthHeaderAxios(data.token)
+                toast.success('Welcome👌')
             } else {
                 toast.error('Invalid Email or password!🤯')
             }

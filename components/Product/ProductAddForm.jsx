@@ -1,37 +1,140 @@
 import Image from 'next/image'
 import { useState } from 'react';
 import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
 import { selectAllCategory, setAllSubcategory } from "../../store/categorySlice";
 import { useDispatch, useSelector } from "react-redux";
-import { allColours } from '../../utils/helperFunctions';
+import { allColours, allSizes, sizeoptions } from '../../utils/helperFunctions';
 import ColorSelector from './ColorSelector';
+import { useEffect } from 'react';
+import { createProduct } from '../../services/adminApi';
+
+
+const animatedComponents = makeAnimated();
 
 const AddProductContainer = () => {
     const dispatch = useDispatch();
+
     //data
     const allCategoryState = useSelector(selectAllCategory);
 
     //states
+    const [selectedId, setSelectedId] = useState("");
+    const [selectedName, setSelectedName] = useState("");
+    const [selectedSlug, setSelectedSug] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
-    const [selectedSubcategory, setSelectedSubcategory] = useState("");
+    const [selectedSubcategory, setSelectedSubcategory] = useState([]);
+    const [selectedColors, setSelectedColors] = useState([]);
+    const [selectedSizes, setSelectedSizes] = useState([]);
+    const [selectedPrice, setSelectedPrice] = useState(100);
+    const [selectedQty, setSelectedQty] = useState(1);
+    const [selectedShortDescription, setSelectedShortDescription] = useState("");
+    const [selectedDescription, setSelectedDescription] = useState("");
+    const [selectedProductHidden, setSelectedProductHidden] = useState(false);
 
 
-    const [fileList, setFileList] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [subCategories, setSubCategories] = useState([]);
+    const [selectedImageList, setSelectedImageList] = useState({});
+    const [selectedImageListUrl, setSelectedImageListUrl] = useState({});
 
-    console.log('Testing', allCategoryState)
-    console.log('Testing2', selectedCategory, allCategoryState.find((cate) => cate._id == selectedCategory))
+    const handleImagesChange = (event) => {
+        const index = event.target.name;
+        const imagesList = { ...selectedImageList };
+        imagesList[`image${index}`] = event.target.files[0];
+        setSelectedImageList(imagesList);
 
-    const handleCategoryChange = (event) => {
-        setSelectedCategory(event.target.value)
+        if (event.target.files[0]) {
+            const imagesListUrl = { ...selectedImageListUrl };
+            imagesListUrl[`image${index}`] = URL.createObjectURL(event.target.files[0]);
+            setSelectedImageListUrl(imagesListUrl)
+        }
+    };
+
+    const handleImageRemove = (index) => {
+        const imagesList = { ...selectedImageList };
+        delete imagesList[`image${index}`];
+        setSelectedImageList(imagesList);
+
+        const imagesListUrl = { ...selectedImageListUrl };
+        delete imagesListUrl[`image${index}`];
+        setSelectedImageListUrl(imagesListUrl)
+
     }
-    const handleSubcategoryChange = (event) => {
-        setSelectedSubcategory(event.target.value)
+
+    const toggleProductHidden = () => {
+        setSelectedProductHidden(!selectedProductHidden)
     }
+    const handleCategoryChange = (newvalue) => {
+        setSelectedCategory(newvalue)
+        setSelectedSubcategory([])
+    }
+    const handleSubcategoryChange = (newvalue) => {
+        setSelectedSubcategory(newvalue)
+    }
+
     const handleSubmit = (e) => {
-        console.log('Testing selectedCategory', selectedCategory)
-    }
+        e.preventDefault();
+
+        console.log('Testing On submit', selectedImageList, selectedId, selectedProductHidden,
+            selectedName, selectedCategory, selectedSubcategory, selectedColors, selectedSizes)
+        let formData = new FormData();
+        formData.append('name', selectedName);
+        formData.append('shortDesc', selectedShortDescription);
+        formData.append('description', selectedDescription);
+        formData.append('category', selectedCategory.value);
+        formData.append('price', selectedPrice);
+        formData.append('hidden', selectedProductHidden);
+        formData.append('sizes', JSON.stringify(selectedSizes.map(item => item.value)));
+        formData.append('colors', JSON.stringify(selectedColors.map(item => item.value)));
+        formData.append('subCategories', JSON.stringify(selectedSubcategory.map(item => item.value)));
+
+        console.log(formData);
+        // if (pid) {
+        //     formData.append('isEdit', true);
+        //     for (var i in inputData.images) {
+        //         formData.append('oldImages', JSON.stringify(inputData.images[i]));
+        //     }
+        // }
+
+        //for Images
+        const fileListAsArray = Array.from(selectedImageList);
+        for (let i in fileListAsArray) {
+            console.log(fileListAsArray[i]);
+            formData.append('images', fileListAsArray[i].originFileObj);
+        }
+
+        createProduct(formData)
+            .then(({ data }) => {
+                if (data && data.success) {
+                    // setInputData({
+                    //     ...inputData,
+                    //     name: '',
+                    //     shortDesc: '',
+                    //     description: '',
+                    //     category: '',
+                    //     subCategories: [],
+                    //     price: '',
+                    //     sizes: [],
+                    //     colors: [],
+                    //     hidden: false,
+                    //     images: [],
+                    //     errors: '',
+                    // });
+                    // if (pid) {
+                    //     deleteProduct(pid).then(({ data }) => {
+                    //         notification.success({ message: 'Product Updated Successfully' });
+                    //         Router.push('/admin/product');
+                    //     });
+                    // } else notification.success({ message: data.message });
+                } else {
+                    // notification.error({ message: data.message });
+                }
+            })
+            .catch((err) =>
+            //  notification.error({ message: 'something went wrong' })
+            { }
+            );
+    };
+
     return (
         <div className="row">
             <div className="col-12">
@@ -51,6 +154,8 @@ const AddProductContainer = () => {
                                                     id="imageUpload"
                                                     className="ec-image-upload"
                                                     accept=".png, .jpg, .jpeg"
+                                                    name={0}
+                                                    onChange={handleImagesChange}
                                                 />
                                                 <label htmlFor="imageUpload">
                                                     <Image
@@ -62,185 +167,90 @@ const AddProductContainer = () => {
                                                     />
                                                 </label>
                                             </div>
-                                            <div className="avatar-preview ec-preview">
-                                                <div className="imagePreview ec-div-preview">
-                                                    <img
-                                                        className="ec-image-preview"
-                                                        src="/images/products/vender-upload-preview.jpg"
+                                            <div className="avatar-edit avatar-delete">
+                                                <div
+                                                    id="imageDelete"
+                                                    className="ec-image-upload"
+                                                    onClick={() => handleImageRemove(0)}
+                                                />
+                                                <label htmlFor="imageDelete">
+                                                    <Image
+                                                        src="/images/icons/delete.svg"
+                                                        width={18}
+                                                        height={18}
+                                                        className="svg_img header_svg"
                                                         alt="edit"
                                                     />
+                                                </label>
+
+                                            </div>
+                                            <div className="avatar-preview ec-preview">
+                                                <div className="imagePreview ec-div-preview">
+                                                    {<img
+                                                        className="ec-image-preview"
+                                                        src={"image0" in selectedImageList ? selectedImageListUrl["image0"] : "/images/products/vender-upload-preview.jpg"}
+                                                        alt="edit"
+                                                    />}
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="thumb-upload-set colo-md-12">
-                                            <div className="thumb-upload">
-                                                <div className="thumb-edit">
-                                                    <input
-                                                        type="file"
-                                                        id="thumbUpload01"
-                                                        className="ec-image-upload"
-                                                        accept=".png, .jpg, .jpeg"
-                                                    />
-                                                    <label htmlFor="imageUpload">
-                                                        <Image
-                                                            src="/images/icons/edit.svg"
-                                                            width={18}
-                                                            height={18}
-                                                            className="svg_img header_svg"
-                                                            alt="edit"
+                                            {[1, 2, 3, 4, 5, 6].map((imageIndex, index) => {
+                                                return <div className="thumb-upload" key={`imagethumb-${imageIndex}`}>
+                                                    <div className="thumb-edit">
+                                                        <input
+                                                            type="file"
+                                                            id="thumbUpload01"
+                                                            className="ec-image-upload"
+                                                            accept=".png, .jpg, .jpeg"
+                                                            name={imageIndex}
+                                                            onChange={handleImagesChange}
                                                         />
-                                                    </label>
-                                                </div>
-                                                <div className="thumb-preview ec-preview">
-                                                    <div className="image-thumb-preview">
-                                                        <img
-                                                            className="image-thumb-preview ec-image-preview"
-                                                            src="/images/products/vender-upload-thumb-preview.jpg"
-                                                            alt="edit"
+                                                        <label htmlFor="imageUpload">
+                                                            <Image
+                                                                src="/images/icons/edit.svg"
+                                                                width={18}
+                                                                height={18}
+                                                                className="svg_img header_svg"
+                                                                alt="edit"
+                                                            />
+                                                        </label>
+
+                                                    </div>
+                                                    <div className="thumb-delete">
+                                                        <div
+                                                            type="file"
+                                                            id="thumbUploadDelete"
+                                                            className="ec-image-upload"
+                                                            accept=".png, .jpg, .jpeg"
+                                                            name={imageIndex}
+                                                            onClick={() => handleImageRemove(0)}
                                                         />
+                                                        <label htmlFor="imageUpload">
+                                                            <Image
+                                                                src="/images/icons/delete.svg"
+                                                                width={18}
+                                                                height={18}
+                                                                className="svg_img header_svg"
+                                                                alt="edit"
+                                                            />
+                                                        </label>
+                                                    </div>
+
+                                                    <div className="thumb-preview ec-preview">
+                                                        <div className="image-thumb-preview">
+                                                            <img
+                                                                className="image-thumb-preview ec-image-preview"
+                                                                src={`image${imageIndex}` in selectedImageList ? selectedImageListUrl[`image${imageIndex}`] : "/images/products/vender-upload-preview.jpg"}
+                                                                alt="edit"
+                                                            />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div className="thumb-upload">
-                                                <div className="thumb-edit">
-                                                    <input
-                                                        type="file"
-                                                        id="thumbUpload02"
-                                                        className="ec-image-upload"
-                                                        accept=".png, .jpg, .jpeg"
-                                                    />
-                                                    <label htmlFor="imageUpload">
-                                                        <Image
-                                                            src="/images/icons/edit.svg"
-                                                            width={18}
-                                                            height={18}
-                                                            className="svg_img header_svg"
-                                                            alt="edit"
-                                                        />
-                                                    </label>
-                                                </div>
-                                                <div className="thumb-preview ec-preview">
-                                                    <div className="image-thumb-preview">
-                                                        <img
-                                                            className="image-thumb-preview ec-image-preview"
-                                                            src="/images/products/vender-upload-thumb-preview.jpg"
-                                                            alt="edit"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="thumb-upload">
-                                                <div className="thumb-edit">
-                                                    <input
-                                                        type="file"
-                                                        id="thumbUpload03"
-                                                        className="ec-image-upload"
-                                                        accept=".png, .jpg, .jpeg"
-                                                    />
-                                                    <label htmlFor="imageUpload">
-                                                        <Image
-                                                            src="/images/icons/edit.svg"
-                                                            width={18}
-                                                            height={18}
-                                                            className="svg_img header_svg"
-                                                            alt="edit"
-                                                        />
-                                                    </label>
-                                                </div>
-                                                <div className="thumb-preview ec-preview">
-                                                    <div className="image-thumb-preview">
-                                                        <img
-                                                            className="image-thumb-preview ec-image-preview"
-                                                            src="/images/products/vender-upload-thumb-preview.jpg"
-                                                            alt="edit"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="thumb-upload">
-                                                <div className="thumb-edit">
-                                                    <input
-                                                        type="file"
-                                                        id="thumbUpload04"
-                                                        className="ec-image-upload"
-                                                        accept=".png, .jpg, .jpeg"
-                                                    />
-                                                    <label htmlFor="imageUpload">
-                                                        <Image
-                                                            src="/images/icons/edit.svg"
-                                                            width={18}
-                                                            height={18}
-                                                            className="svg_img header_svg"
-                                                            alt="edit"
-                                                        />
-                                                    </label>
-                                                </div>
-                                                <div className="thumb-preview ec-preview">
-                                                    <div className="image-thumb-preview">
-                                                        <img
-                                                            className="image-thumb-preview ec-image-preview"
-                                                            src="/images/products/vender-upload-thumb-preview.jpg"
-                                                            alt="edit"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="thumb-upload">
-                                                <div className="thumb-edit">
-                                                    <input
-                                                        type="file"
-                                                        id="thumbUpload05"
-                                                        className="ec-image-upload"
-                                                        accept=".png, .jpg, .jpeg"
-                                                    />
-                                                    <label htmlFor="imageUpload">
-                                                        <Image
-                                                            src="/images/icons/edit.svg"
-                                                            width={18}
-                                                            height={18}
-                                                            className="svg_img header_svg"
-                                                            alt="edit"
-                                                        />
-                                                    </label>
-                                                </div>
-                                                <div className="thumb-preview ec-preview">
-                                                    <div className="image-thumb-preview">
-                                                        <img
-                                                            className="image-thumb-preview ec-image-preview"
-                                                            src="/images/products/vender-upload-thumb-preview.jpg"
-                                                            alt="edit"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="thumb-upload">
-                                                <div className="thumb-edit">
-                                                    <input
-                                                        type="file"
-                                                        id="thumbUpload06"
-                                                        className="ec-image-upload"
-                                                        accept=".png, .jpg, .jpeg"
-                                                    />
-                                                    <label htmlFor="imageUpload">
-                                                        <Image
-                                                            src="/images/icons/edit.svg"
-                                                            width={18}
-                                                            height={18}
-                                                            className="svg_img header_svg"
-                                                            alt="edit"
-                                                        />
-                                                    </label>
-                                                </div>
-                                                <div className="thumb-preview ec-preview">
-                                                    <div className="image-thumb-preview">
-                                                        <img
-                                                            className="image-thumb-preview ec-image-preview"
-                                                            src="/images/products/vender-upload-thumb-preview.jpg"
-                                                            alt="edit"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            }
+                                            )}
+
+
                                         </div>
                                     </div>
                                 </div>
@@ -256,6 +266,8 @@ const AddProductContainer = () => {
                                                 type="text"
                                                 className="form-control slug-title"
                                                 id="productname"
+                                                value={selectedName}
+                                                onChange={(e) => setSelectedName(e.target.value)}
                                             />
                                         </div>
                                         <div className="col-md-6">
@@ -264,119 +276,63 @@ const AddProductContainer = () => {
                                             </label>
                                             <input
                                                 type="text"
-                                                className="form-control slug-title"
+                                                className="form-control slug-title disabled"
                                                 id="slug"
-                                                name="slug" />
+                                                name="slug"
+                                                disabled
+                                                placeholder='Slug Will be generated automatically'
+                                                value={selectedSlug}
+                                                onChange={(e) => setSelectedSug(e.target.value)}
+                                            />
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label">
                                                 Select Category
                                             </label>
-                                            <select
-                                                name="categories"
-                                                id="Categories"
-                                                className="form-select"
-                                                onChange={handleCategoryChange}
+                                            {<Select
+                                                components={animatedComponents}
+                                                defaultValue={[]}
+                                                noOptionsMessage={() => "Please select category"}
                                                 value={selectedCategory}
-                                            >
-                                                <option
-                                                    value=""
-                                                    disabled
-                                                >
-                                                    Please Select Category
-                                                </option>
-                                                {allCategoryState?.map((cate, index) => (
-                                                    <option
-                                                        key={index}
-                                                        value={cate._id}
-                                                        name={cate.name}
-                                                    >
-                                                        {cate.name}
-                                                    </option>
-                                                ))}
-
-                                            </select>
-
+                                                onChange={handleCategoryChange}
+                                                options={allCategoryState.map((c) => { return { value: c._id, label: c.name } })}
+                                            />}
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label">
                                                 Select SubCategory (optional)
                                             </label>
-                                            <select
-                                                name="categories"
-                                                id="Categories"
-                                                className="form-select"
-                                                onChange={handleSubcategoryChange}
+                                            {<Select
+                                                closeMenuOnSelect={false}
+                                                components={animatedComponents}
+                                                defaultValue={[]}
+                                                isMulti
+                                                noOptionsMessage={() => "Please select category first."}
                                                 value={selectedSubcategory}
-                                            >
-                                                <option
-                                                    value=""
-                                                    disabled
-                                                >
-                                                    Please Select Category First
-                                                </option>
-                                                {selectedCategory && allCategoryState.find((cate) => cate._id == selectedCategory).subcategories?.map((cate, index) => (
-                                                    <option
-                                                        key={`select sub category ${index}`}
-                                                        value={cate._id}
-                                                        name={cate.name}
-                                                    // onClick={() => handleCategoryChange(cate)}
-                                                    >
-                                                        {cate.name}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                                onChange={handleSubcategoryChange}
+                                                options={allCategoryState.find((cate) => cate._id == selectedCategory.value)?.subcategories?.map((c) => { return { value: c._id, label: c.name } })}
+                                            />}
                                         </div>
 
-                                        <div className="col-md-4 mb-25">
-
+                                        <div className="col-md-6 mb-25">
                                             <label className="form-label">Colors</label>
-                                            <ColorSelector />
+                                            <ColorSelector defaultValue={[]}
+                                                components={animatedComponents}
+                                                value={selectedColors}
+                                                onChange={setSelectedColors}
+                                            />
                                         </div>
-                                        <div className="col-md-8 mb-25">
+                                        <div className="col-md-6 mb-25">
                                             <label className="form-label">Size</label>
-                                            <div className="form-checkbox-box">
-                                                <div className="form-check form-check-inline">
-                                                    <input
-                                                        type="checkbox"
-                                                        name="size1"
-                                                        defaultValue="size"
-                                                    />
-                                                    <label>S</label>
-                                                </div>
-                                                <div className="form-check form-check-inline">
-                                                    <input
-                                                        type="checkbox"
-                                                        name="size1"
-                                                        defaultValue="size"
-                                                    />
-                                                    <label>M</label>
-                                                </div>
-                                                <div className="form-check form-check-inline">
-                                                    <input
-                                                        type="checkbox"
-                                                        name="size1"
-                                                        defaultValue="size"
-                                                    />
-                                                    <label>L</label>
-                                                </div>
-                                                <div className="form-check form-check-inline">
-                                                    <input
-                                                        type="checkbox"
-                                                        name="size1"
-                                                        defaultValue="size"
-                                                    />
-                                                    <label>XL</label>
-                                                </div>
-                                                <div className="form-check form-check-inline">
-                                                    <input
-                                                        type="checkbox"
-                                                        name="size1"
-                                                        defaultValue="size"
-                                                    />
-                                                    <label>XXL</label>
-                                                </div>
-                                            </div>
+                                            <Select
+                                                closeMenuOnSelect={false}
+                                                components={animatedComponents}
+                                                defaultValue={[]}
+                                                isMulti
+                                                options={sizeoptions}
+                                                value={selectedSizes}
+                                                onChange={setSelectedSizes}
+                                            />
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label">
@@ -386,16 +342,25 @@ const AddProductContainer = () => {
                                                 type="number"
                                                 className="form-control"
                                                 id="price1"
+                                                min={1}
+                                                value={selectedPrice}
+                                                onChange={(e) => setSelectedPrice(e.target.value)}
                                             />
                                         </div>
+
                                         <div className="col-md-6">
-                                            <label className="form-label">Quantity</label>
+                                            <label className="form-label">Quantity (In Stock)</label>
                                             <input
                                                 type="number"
                                                 className="form-control"
                                                 id="quantity1"
+                                                min={1}
+                                                value={selectedQty}
+                                                onChange={(e) => setSelectedQty(e.target.value)}
                                             />
                                         </div>
+
+
                                         <div className="col-md-12">
                                             <label className="form-label">
                                                 Sort Description (optional)
@@ -403,7 +368,9 @@ const AddProductContainer = () => {
                                             <textarea
                                                 className="form-control"
                                                 rows={2}
-                                                defaultValue={""}
+                                                value={selectedShortDescription}
+                                                onChange={(e) => setSelectedShortDescription(e.target.value)}
+                                                placeholder='write a short description about the product.'
                                             />
                                         </div>
                                         <div className="col-md-12">
@@ -411,9 +378,27 @@ const AddProductContainer = () => {
                                             <textarea
                                                 className="form-control"
                                                 rows={4}
-                                                defaultValue={""}
+                                                value={selectedDescription}
+                                                onChange={(e) => setSelectedDescription(e.target.value)}
+                                                placeholder='write a full description about the product.'
                                             />
                                         </div>
+                                        <div className="col-md-12">
+                                            <label className="form-label">Product Status?</label>
+                                            <div className="form-checkbox-box">
+                                                <div className="form-check form-check-inline">
+                                                    <label>Active</label>
+                                                    <input type="checkbox" name="active"
+                                                        checked={!selectedProductHidden} onChange={toggleProductHidden} />
+                                                </div>
+                                                <div className="form-check form-check-inline">
+                                                    <label>Disabled</label>
+                                                    <input type="checkbox" name="disabled"
+                                                        checked={selectedProductHidden} onChange={toggleProductHidden} />
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         {/* <div className="col-md-12">
                                             <label className="form-label">
                                                 Product Tags{" "}
