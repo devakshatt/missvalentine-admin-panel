@@ -10,8 +10,18 @@ export default function Document() {
                     integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
                     crossOrigin="anonymous"
                 /> */}
+                <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+                <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800;900&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet" />
+
+                <link href="https://cdn.materialdesignicons.com/4.4.95/css/materialdesignicons.min.css" rel="stylesheet" />
+
+                <link href="assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet" />
+                <link href="assets/plugins/simplebar/simplebar.css" rel="stylesheet" />
             </Head>
-            <body>
+
+            <body id="app" >
                 <Main />
                 <NextScript />
                 {/* <script

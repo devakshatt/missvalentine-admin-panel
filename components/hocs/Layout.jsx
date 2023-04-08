@@ -1,11 +1,46 @@
 import Footer from "../Footer";
+import { useRouter } from 'next/router'
 import Navbar from "../Navbar";
 import Sidebar from "../Sidebar";
+import React, { useEffect, useContext } from 'react';
+import AppContext from "../../AppContext";
 
 const withLayout = (PageComponent) => {
   return function WithPage({ ...props }) {
+    const router = useRouter()
+    const context = useContext(AppContext);
+    const { state } = context;
+
+    useEffect(() => {
+      console.log('withLayout', state);
+      // on initial load - run auth check 
+      if (!state.auth.authStatus) {
+        router.push('/');
+      }
+
+      // // on route change start - hide page content by setting authorized to false  
+      // const hideContent = () => setAuthorized(false);
+      // router.events.on('routeChangeStart', hideContent);
+
+      // // on route change complete - run auth check 
+      // router.events.on('routeChangeComplete', authCheck)
+
+      // // unsubscribe from events in useEffect return function
+      // return () => {
+      //   router.events.off('routeChangeStart', hideContent);
+      //   router.events.off('routeChangeComplete', authCheck);
+      // }
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+
+
     return (
-      <div className="ec-header-fixed ec-sidebar-fixed ec-sidebar-dark ec-header-light" id="body">
+      <div className="ec-header-fixed ec-sidebar-fixed ec-sidebar-light ec-header-light compact-spacing" id="body">
+
+        {/* <div className="ec-header-fixed ec-sidebar-fixed ec-sidebar-light ec-header-light" id="body"> */}
+        {/* ec-header-fixed ec-sidebar-fixed ec-sidebar-light ec-header-light compact-spacing */}
         <div className="wrapper">
           {/* LEFT MAIN SIDEBAR */}
           <Sidebar />

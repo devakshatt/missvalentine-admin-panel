@@ -5,16 +5,17 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.css'
 import "../styles/main.scss";
 import AppContext from '../AppContext';
+import usePersistState from '../utils/usePersistState';
 
 
 function MyApp({ Component, pageProps }) {
-    const [auth, setAuth] = useState({
+    const [auth, setAuth] = usePersistState("auth", {
         authStatus: false,
         token: null,
         user: null
     });
-    const [allCategory, setAllCategory] = useState([]);
-    const [allProducts, setAllProducts] = useState([]);
+    const [allCategory, setAllCategory] = usePersistState("allCategory", []);
+    const [allProducts, setAllProducts] = usePersistState("allProducts", []);
     return <AppContext.Provider
         value={{
             state: {
@@ -24,7 +25,7 @@ function MyApp({ Component, pageProps }) {
             },
             setAuth: setAuth,
             setAllCategory: setAllCategory,
-            setAllProducts: setAllProducts
+            setAllProducts: setAllProducts,
         }}
     >
         <Head>

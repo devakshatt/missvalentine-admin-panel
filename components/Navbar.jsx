@@ -1,4 +1,21 @@
+import AppContext from "../AppContext";
+import React, { useContext } from 'react';
+import { useRouter } from 'next/router'
+
 export default function Navbar() {
+    const router = useRouter()
+    const context = useContext(AppContext);
+    const { setAuth } = context;
+
+    const handleLogout = () => {
+        setAuth({
+            authStatus: false,
+            token: null,
+            user: null
+        });
+        router.push('/');
+    }
+
     return (
         <header className="ec-main-header" id="header">
             <nav className="navbar navbar-static-top navbar-expand-lg">
@@ -35,58 +52,11 @@ export default function Navbar() {
                         {/* User Account */}
                         <li className="dropdown user-menu">
                             <button
-                                className="dropdown-toggle nav-link ec-drop"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
+                                className=" nav-link ec-drop btn btn-danger py-2 px-4 "
+                                onClick={handleLogout}
                             >
-                                <img
-                                    src="/images/user/user.png"
-                                    className="user-image"
-                                    alt="User Image"
-                                />
+                                Log out
                             </button>
-                            <ul className="dropdown-menu dropdown-menu-right ec-dropdown-menu">
-                                {/* User image */}
-                                <li className="dropdown-header">
-                                    <img
-                                        src="/images/user/user.png"
-                                        className="img-circle"
-                                        alt="User Image"
-                                    />
-                                    <div className="d-inline-block">
-                                        John Deo{" "}
-                                        <small className="pt-1">john.example@gmail.com</small>
-                                    </div>
-                                </li>
-                                <li>
-                                    <a href="user-profile.html">
-                                        <i className="mdi mdi-account" /> My Profile
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i className="mdi mdi-email" /> Message
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        {" "}
-                                        <i className="mdi mdi-diamond-stone" /> Projects{" "}
-                                    </a>
-                                </li>
-                                <li className="right-sidebar-in">
-                                    {/* <a href="javascript:0"> */}
-                                    {" "}
-                                    <i className="mdi mdi-settings-outline" /> Setting{" "}
-                                    {/* </a> */}
-                                </li>
-                                <li className="dropdown-footer">
-                                    <a href="index.html">
-                                        {" "}
-                                        <i className="mdi mdi-logout" /> Log Out{" "}
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                         <li className="dropdown notifications-menu custom-dropdown">
                             <button className="dropdown-toggle notify-toggler custom-dropdown-toggler">

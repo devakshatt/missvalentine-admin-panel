@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { login } from "../services/authApi";
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify';
@@ -10,7 +10,7 @@ import AppContext from "../AppContext";
 export default function Login() {
     const router = useRouter()
     const context = useContext(AppContext);
-    const { setAuth } = context;
+    const { setAuth, state } = context;
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -21,6 +21,18 @@ export default function Login() {
             : setPassword(event.target.value);
     };
 
+    useEffect(() => {
+        console.log('Login', state);
+
+        // redirect to home if already logged in
+        if (state.auth.authStatus) {
+            router.push('/dashboard');
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => { }, []);
     // const handleLogin = async (e) => {
     //     try {
     //       e.preventDefault()
@@ -81,9 +93,7 @@ export default function Login() {
                     <div className="card">
                         <div className="card-header bg-primary">
                             <div className="ec-brand">
-                                <a href="index.html" title="Ekka">
-                                    <img className="ec-brand-icon" src="assets/img/logo/logo-login.png" alt="" />
-                                </a>
+                                <h2 className="text-white text-center py-4">Admin Panel</h2>
                             </div>
                         </div>
                         <div className="card-body p-5">
@@ -125,14 +135,4 @@ export default function Login() {
 
 
     );
-}
-
-export async function getServerSideProps(ctx) {
-
-
-    return {
-        props: {
-            data: null
-        }
-    }
 }

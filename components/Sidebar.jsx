@@ -1,18 +1,24 @@
 import { useRouter } from "next/router";
+import { useState, useEffect } from 'react';
 
 export default function Sidebar() {
+    const [expandItem, setExpandItem] = useState("none");
     const router = useRouter();
     const handleNavigate = (endpoint) => {
         router.push(endpoint)
     };
+
+    const handleSideBarClick = (_item) => {
+        setExpandItem(s => s == _item ? "none" : _item)
+    }
 
     return (
         <div className="ec-left-sidebar ec-bg-sidebar">
             <div id="sidebar" className="sidebar ec-sidebar-footer">
                 <div className="ec-brand">
                     <a href="/dashboard" title="Ekka">
-                        <img className="ec-brand-icon" src="/image/logo/ec-site-logo.png" alt="" />
-                        <span className="ec-brand-name text-truncate">Home</span>
+                        {/* <img className="ec-brand-icon" src="/image/logo/ec-site-logo.png" alt="" /> */}
+                        <span className="ec-brand-name text-truncate">Admin</span>
                     </a>
                 </div>
                 {/* begin sidebar scrollbar */}
@@ -21,14 +27,14 @@ export default function Sidebar() {
                     <ul className="nav sidebar-inner" id="sidebar-menu">
                         {/* Dashboard */}
                         <li>
-                            <a className="sidenav-item-link" href="index.html">
+                            <a className="sidenav-item-link">
                                 <i className="mdi mdi-view-dashboard-outline" />
-                                <span className="nav-text">Dashboard</span>
+                                <span onClick={() => handleNavigate("/dashboard")} className="nav-text">Dashboard</span>
                             </a>
                             <hr />
                         </li>
                         {/* Vendors */}
-                        <li className="has-sub">
+                        {/* <li className="has-sub">
                             <a className="sidenav-item-link">
                                 <i className="mdi mdi-account-group-outline" />
                                 <span className="nav-text">Vendors</span> <b className="caret" />
@@ -52,7 +58,7 @@ export default function Sidebar() {
                                     </li>
                                 </ul>
                             </div>
-                        </li>
+                        </li> */}
                         {/* Users */}
                         <li className="has-sub">
                             <a className="sidenav-item-link">
@@ -81,33 +87,44 @@ export default function Sidebar() {
                             <hr />
                         </li>
                         {/* Category */}
-                        <li className="has-sub">
+                        <li className={`has-sub ${expandItem == "category" ? "active expand" : ""}`} onClick={() => handleSideBarClick("category")}>
                             <a className="sidenav-item-link">
                                 <i className="mdi mdi-dns-outline" />
                                 <span className="nav-text">Categories</span> <b className="caret" />
                             </a>
-                            <div className="collapse">
+                            <div className={`collapse ${expandItem == "category" ? "show" : ""}`}>
                                 <ul className="sub-menu" id="categorys" data-parent="#sidebar-menu">
                                     <li className="">
-                                        <a className="sidenav-item-link" href="main-category.html">
-                                            <span className="nav-text">Main Category</span>
+                                        <a className="sidenav-item-link" >
+                                            <span onClick={() => handleNavigate("/category-add")} className="nav-text">Add Category</span>
                                         </a>
                                     </li>
                                     <li className="">
-                                        <a className="sidenav-item-link" href="sub-category.html">
-                                            <span className="nav-text">Sub Category</span>
+                                        <a className="sidenav-item-link" >
+                                            <span onClick={() => handleNavigate("/category-list")} className="nav-text">Category List</span>
                                         </a>
                                     </li>
+                                    <li className="">
+                                        <a className="sidenav-item-link" >
+                                            <span onClick={() => handleNavigate("/category-add")} className="nav-text">Add Sub Category</span>
+                                        </a>
+                                    </li>
+                                    <li className="">
+                                        <a className="sidenav-item-link" >
+                                            <span onClick={() => handleNavigate("/category-list")} className="nav-text">Sub Category List</span>
+                                        </a>
+                                    </li>
+
                                 </ul>
                             </div>
                         </li>
                         {/* Products */}
-                        <li className="has-sub active expand">
+                        <li className={`has-sub ${expandItem == "product" ? "active expand" : ""}`} onClick={() => handleSideBarClick("product")}>
                             <a className="sidenav-item-link">
                                 <i className="mdi mdi-palette-advanced" />
                                 <span className="nav-text">Products</span> <b className="caret" />
                             </a>
-                            <div className="collapse show">
+                            <div className={`collapse ${expandItem == "product" ? "show" : ""}`}>
                                 <ul className="sub-menu" id="products" data-parent="#sidebar-menu">
 
                                     <li className="">
