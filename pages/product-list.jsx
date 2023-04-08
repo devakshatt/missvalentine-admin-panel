@@ -1,10 +1,27 @@
+import AppContext from "../AppContext";
 import ContainerWrapper from "../components/Dashboard/ContainerWrapper";
 import withLayout from "../components/hocs/Layout";
-import { wrapper } from '../store/store';
-import { fetchAllProducts } from '../store/categorySlice';
 import ProductList from "../components/Product/ProductList";
+import { useContext, useEffect } from 'react';
+import { getAllProducts } from "../services/adminApi";
 
 const ProductListPage = () => {
+    const context = useContext(AppContext);
+    const { setAllProducts } = context;
+
+
+    const handleGetAllProducts = async () => {
+        console.log('Fetching all Products')
+        const response = await getAllProducts();
+        if (response.data) {
+            setAllProducts(response.data.data);
+        }
+    }
+
+    useEffect(() => {
+        handleGetAllProducts();
+    }, []);
+
     return (
         <ContainerWrapper >
             <ProductList />
@@ -12,11 +29,5 @@ const ProductListPage = () => {
     );
 }
 
-export const getServerSideProps = wrapper.getServerSideProps(
-    (store) =>
-        async ({ req, res }) => {
-            console.log("asdasdasd")
-            await store.dispatch(fetchAllProducts());
-        });
 
 export default withLayout(ProductListPage);

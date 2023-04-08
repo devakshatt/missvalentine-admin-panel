@@ -2,22 +2,21 @@ import Image from 'next/image'
 import { useState } from 'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import { selectAllCategory, setAllSubcategory } from "../../store/categorySlice";
-import { useDispatch, useSelector } from "react-redux";
-import { allColours, allSizes, sizeoptions } from '../../utils/helperFunctions';
+import { sizeoptions } from '../../utils/helperFunctions';
 import ColorSelector from './ColorSelector';
-import { useEffect } from 'react';
 import { createProduct } from '../../services/adminApi';
 import { toast } from 'react-toastify';
+import { useContext, useEffect } from 'react';
+import AppContext from '../../AppContext';
 
 
 const animatedComponents = makeAnimated();
 
 const AddProductContainer = () => {
-    const dispatch = useDispatch();
 
     //data
-    const allCategoryState = useSelector(selectAllCategory);
+    const context = useContext(AppContext);
+    const { allCategory } = context.state;
 
     //states
     const [selectedId, setSelectedId] = useState("");
@@ -281,7 +280,7 @@ const AddProductContainer = () => {
                                                 noOptionsMessage={() => "Please select category"}
                                                 value={selectedCategory}
                                                 onChange={handleCategoryChange}
-                                                options={allCategoryState.map((c) => { return { value: c._id, label: c.name } })}
+                                                options={allCategory.map((c) => { return { value: c._id, label: c.name } })}
                                             />}
                                         </div>
                                         <div className="col-md-6">
@@ -296,7 +295,7 @@ const AddProductContainer = () => {
                                                 noOptionsMessage={() => "Please select category first."}
                                                 value={selectedSubcategory}
                                                 onChange={handleSubcategoryChange}
-                                                options={allCategoryState.find((cate) => cate._id == selectedCategory.value)?.subcategories?.map((c) => { return { value: c._id, label: c.name } })}
+                                                options={allCategory.find((cate) => cate._id == selectedCategory.value)?.subcategories?.map((c) => { return { value: c._id, label: c.name } })}
                                             />}
                                         </div>
 

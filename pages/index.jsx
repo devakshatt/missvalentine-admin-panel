@@ -1,17 +1,19 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { login } from "../services/authApi";
-import { setLoginTrue } from "../store/authSlice";
+import React, { useContext } from 'react';
+
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify';
 import { setAuthHeaderAxios } from "../utils/callApi";
+import AppContext from "../AppContext";
 
 export default function Login() {
     const router = useRouter()
+    const context = useContext(AppContext);
+    const { setAuth } = context;
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const dispatch = useDispatch();
 
     const changeHandler = (event) => {
         event.target.name === 'email'
@@ -58,8 +60,8 @@ export default function Login() {
             console.log("Authent pre", data)
 
             if (data && data.token) {
-                console.log("Authent", data)
-                dispatch(setLoginTrue({ user: data.user, token: data.token }));
+                console.log("Authent", data);
+                setAuth({ user: data.user, token: data.token, authStatus: true })
                 router.push("/dashboard");
                 setAuthHeaderAxios(data.token)
                 toast.success('Welcome👌')
