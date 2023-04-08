@@ -15,6 +15,7 @@ const ProductListPage = () => {
 export const getServerSideProps = wrapper.getServerSideProps(
     (store) =>
         async ({ req, res }) => {
+            console.log("asdasdasd")
             await store.dispatch(fetchAllProducts());
         });
 

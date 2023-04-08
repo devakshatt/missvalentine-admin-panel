@@ -3,20 +3,18 @@ import { ToastContainer } from 'react-toastify';
 import Head from 'next/head'
 import { Provider } from "react-redux";
 import { PersistGate } from 'redux-persist/integration/react';
-import { persistStore } from 'redux-persist';
+import { useStore } from "react-redux";
 
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.css'
 import "../styles/main.scss";
 
 
-function MyApp({ Component, ...rest }) {
-    const { store, props } = wrapper.useWrappedStore(rest);
-    const { pageProps } = props;
-    const persistor = persistStore(store);
+function MyApp({ Component, pageProps }) {
+    const store = useStore();
 
     return <Provider store={store}>
-        <PersistGate persistor={persistor}>
+        <PersistGate persistor={store.__persistor}>
 
             <Head>
                 <title>Admin Panel- MissValentine</title>
@@ -36,4 +34,6 @@ function MyApp({ Component, ...rest }) {
     </Provider>
 }
 
-export default MyApp;
+export default wrapper.withRedux(MyApp);
+
+// export default MyApp;

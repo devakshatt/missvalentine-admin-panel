@@ -28,7 +28,7 @@ function ProductList(props) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {allProductsState.map((product) => <tr>
+                                    {allProductsState?.map((product) => <tr key={`productlist-${product.name}${product.createdAt}`}>
                                         <td>
                                             <img
                                                 className="tbl-thumb"

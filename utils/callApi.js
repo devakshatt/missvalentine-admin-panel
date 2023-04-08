@@ -19,21 +19,13 @@ export const callApi = async ({ method = 'get', url, data, options }) => {
         if (options && options.headers) {
             headers = { ...headers, ...options.headers };
         }
-        const res = await axios({
+        return await axios({
             method,
             url,
             baseURL: baseURL,
             data,
             headers: headers,
         })
-            .then((response) => {
-                return response;
-            })
-            .catch((err) => {
-                console.log(JSON.stringify(err, null, 2));
-                return err;
-            });
-        return res;
     } catch (err) {
         console.log(JSON.stringify(err, null, 2));
         return err;

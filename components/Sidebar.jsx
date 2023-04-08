@@ -109,19 +109,15 @@ export default function Sidebar() {
                             </a>
                             <div className="collapse show">
                                 <ul className="sub-menu" id="products" data-parent="#sidebar-menu">
-                                    <li className="active">
-                                        <div className="sidenav-item-link" href="product-add.html">
-                                            <span data-url="product-add" onClick={() => handleNavigate("/product-add")} className="nav-text">Add Product</span>
-                                        </div>
-                                    </li>
+
                                     <li className="">
-                                        <a className="sidenav-item-link" href="product-list.html">
-                                            <span className="nav-text">List Product</span>
+                                        <a className="sidenav-item-link" >
+                                            <span onClick={() => handleNavigate("/product-add")} className="nav-text">Add Product</span>
                                         </a>
                                     </li>
                                     <li className="">
-                                        <a className="sidenav-item-link" href="product-grid.html">
-                                            <span className="nav-text">Grid Product</span>
+                                        <a className="sidenav-item-link" >
+                                            <span onClick={() => handleNavigate("/product-list")} className="nav-text">List Product</span>
                                         </a>
                                     </li>
                                     <li className="">

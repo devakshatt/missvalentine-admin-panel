@@ -8,6 +8,7 @@ import { allColours, allSizes, sizeoptions } from '../../utils/helperFunctions';
 import ColorSelector from './ColorSelector';
 import { useEffect } from 'react';
 import { createProduct } from '../../services/adminApi';
+import { toast } from 'react-toastify';
 
 
 const animatedComponents = makeAnimated();
@@ -96,42 +97,27 @@ const AddProductContainer = () => {
         // }
 
         //for Images
-        const fileListAsArray = Array.from(selectedImageList);
+        const fileListAsArray = Array.from(Object.values(selectedImageList));
         for (let i in fileListAsArray) {
-            console.log(fileListAsArray[i]);
-            formData.append('images', fileListAsArray[i].originFileObj);
+            console.log("fileImage", fileListAsArray[i]);
+            formData.append('images', fileListAsArray[i]);
         }
 
         createProduct(formData)
             .then(({ data }) => {
                 if (data && data.success) {
-                    // setInputData({
-                    //     ...inputData,
-                    //     name: '',
-                    //     shortDesc: '',
-                    //     description: '',
-                    //     category: '',
-                    //     subCategories: [],
-                    //     price: '',
-                    //     sizes: [],
-                    //     colors: [],
-                    //     hidden: false,
-                    //     images: [],
-                    //     errors: '',
-                    // });
+                    toast.success(data.message)
                     // if (pid) {
                     //     deleteProduct(pid).then(({ data }) => {
                     //         notification.success({ message: 'Product Updated Successfully' });
                     //         Router.push('/admin/product');
                     //     });
-                    // } else notification.success({ message: data.message });
                 } else {
-                    // notification.error({ message: data.message });
+                    toast.error(data.message)
                 }
             })
             .catch((err) =>
-            //  notification.error({ message: 'something went wrong' })
-            { }
+                toast.error('something went wrong')
             );
     };
 
