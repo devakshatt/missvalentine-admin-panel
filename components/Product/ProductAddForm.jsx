@@ -274,14 +274,14 @@ const AddProductContainer = () => {
                                             <label className="form-label">
                                                 Select Category
                                             </label>
-                                            {<Select
+                                            <Select
                                                 components={animatedComponents}
                                                 defaultValue={[]}
                                                 noOptionsMessage={() => "Please select category"}
                                                 value={selectedCategory}
                                                 onChange={handleCategoryChange}
                                                 options={allCategory.map((c) => { return { value: c._id, label: c.name } })}
-                                            />}
+                                            />
                                         </div>
                                         <div className="col-md-6">
                                             <label className="form-label">

@@ -106,12 +106,12 @@ export default function Sidebar() {
                                     </li>
                                     <li className="">
                                         <a className="sidenav-item-link" >
-                                            <span onClick={() => handleNavigate("/category-add")} className="nav-text">Add Sub Category</span>
+                                            <span onClick={() => handleNavigate("/subcategory-add")} className="nav-text">Add Sub Category</span>
                                         </a>
                                     </li>
                                     <li className="">
                                         <a className="sidenav-item-link" >
-                                            <span onClick={() => handleNavigate("/category-list")} className="nav-text">Sub Category List</span>
+                                            <span onClick={() => handleNavigate("/subcategory-list")} className="nav-text">Sub Category List</span>
                                         </a>
                                     </li>
 

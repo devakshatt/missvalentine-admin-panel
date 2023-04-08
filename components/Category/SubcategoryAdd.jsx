@@ -1,22 +1,24 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { createCategory, updateCategory } from '../../services/adminApi';
+import { createSubcategory, updateSubCategory } from '../../services/adminApi';
 import { toast } from 'react-toastify';
 import { useSearchParams } from 'next/navigation';
 import AppContext from '../../AppContext';
 import { useRouter } from 'next/router';
+import Select from 'react-select';
 
-const CategoryAddForm = () => {
+const SubcategoryAddForm = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const context = useContext(AppContext);
-    const { allCategory } = context.state;
+    const { allCategory, allSubcategory } = context.state;
 
     const selectedId = searchParams.get('categoryId');
     const [selectedName, setSelectedName] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("");
 
     useEffect(() => {
         if (selectedId) {
-            const cate = allCategory.find((_cate) => _cate._id == selectedId);
+            const cate = allSubcategory.find((_cate) => _cate._id == selectedId);
             setSelectedName(cate.name)
         }
     }, []);
@@ -24,7 +26,7 @@ const CategoryAddForm = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         if (selectedId) {
-            updateCategory(
+            updateSubCategory(
                 {
                     name: selectedName,
                 },
@@ -46,7 +48,7 @@ const CategoryAddForm = () => {
                 }
                 )
         } else {
-            createCategory({
+            createSubcategory({
                 name: selectedName,
             })
                 .then(({ data }) => {
@@ -71,7 +73,7 @@ const CategoryAddForm = () => {
         <div className="ec-cat-list card card-default mb-24px">
             <div className="card-body">
                 <div className="ec-cat-form">
-                    <h4>Add New Category</h4>
+                    <h4>Add New Sub Category</h4>
                     <form>
                         <div className="form-group row">
                             <label htmlFor="text" className="col-12 col-form-label">
@@ -84,8 +86,22 @@ const CategoryAddForm = () => {
                                     className="form-control here slug-title"
                                     type="text"
                                     value={selectedName}
-                                    placeholder="Enter category name"
+                                    placeholder="Enter subcategory name"
                                     onChange={(event) => setSelectedName(event.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="form-group row">
+                            <label htmlFor="text" className="col-12 col-form-label">
+                                Parent Category
+                            </label>
+                            <div className="col-12">
+                                <Select
+                                    defaultValue={[]}
+                                    noOptionsMessage={() => "Please select parent category"}
+                                    value={selectedCategory}
+                                    onChange={setSelectedCategory}
+                                    options={allCategory.map((c) => { return { value: c._id, label: c.name } })}
                                 />
                             </div>
                         </div>
@@ -175,4 +191,4 @@ const CategoryAddForm = () => {
     );
 };
 
-export default CategoryAddForm;
+export default SubcategoryAddForm;

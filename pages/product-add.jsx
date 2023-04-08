@@ -7,13 +7,13 @@ import { getAllCategories } from "../services/adminApi";
 
 const ProductAdd = () => {
     const context = useContext(AppContext);
-    const { setAllCategory } = context;
+    const { setAllSubcategory } = context;
 
     const handleGetAllCategory = async () => {
         console.log('Fetching all categories')
         const response = await getAllCategories();
         if (response.data && response.data.success) {
-            setAllCategory(response.data.data);
+            setAllSubcategory(response.data.data);
         }
     }
 
@@ -22,7 +22,7 @@ const ProductAdd = () => {
     }, []);
 
     return (
-        <ContainerWrapper >
+        <ContainerWrapper title="Add Product" crumbName="Product" >
             <AddProductContainer />
         </ContainerWrapper>
     );

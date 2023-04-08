@@ -3,28 +3,29 @@ import AppContext from '../../AppContext';
 import { useContext, useState } from 'react';
 import ConfirmationModal from '../ConfirmationModal';
 import { toast } from 'react-toastify';
-import { deleteCategory } from '../../services/adminApi';
+import { deleteCategory, deleteSubcategory } from '../../services/adminApi';
 import { useRouter } from 'next/router';
+import chroma from 'chroma-js';
 
 const SubcategoryList = () => {
     const router = useRouter()
     const context = useContext(AppContext);
-    const { allCategory } = context.state;
+    const { allSubcategory } = context.state;
 
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState({});
+    const [selectedSubcategory, setSelectedSubcategory] = useState({});
 
-    console.log("allcate", allCategory)
+    console.log("allsubcate", allSubcategory)
 
     const handleOpenDeleteModal = (_cate) => {
         setIsOpen(true);
-        setSelectedCategory(_cate)
+        setSelectedSubcategory(_cate)
     }
 
-    const handleDeleteCategory = () => {
-        const id = selectedCategory._id;
+    const handleDeleteSubcategory = () => {
+        const id = selectedSubcategory._id;
         try {
-            deleteCategory(id).then(({ data }) => {
+            deleteSubcategory(id).then(({ data }) => {
                 if (data && data.success) {
                     toast.success(data.message)
                 } else
@@ -35,14 +36,20 @@ const SubcategoryList = () => {
             toast.error("Something went wrong");
         }
     }
+
+    let categoryColorForTag = {}
+    allSubcategory.forEach(subcategory => {
+        categoryColorForTag[subcategory?.category?._id] = chroma.random()
+    })
+
     return (
         <div className="ec-cat-list card card-default">
             <ConfirmationModal
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
                 heading={"Delete Category"}
-                content={`Are you sure? You want to delete category: ${selectedCategory?.name}`}
-                handleOk={() => handleDeleteCategory()}
+                content={`Are you sure? You want to delete sub category: ${selectedSubcategory?.name}`}
+                handleOk={() => handleDeleteSubcategory()}
             />
             <div className="card-body">
                 <div className="table-responsive">
@@ -50,7 +57,7 @@ const SubcategoryList = () => {
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Sub Categories</th>
+                                <th>Main Category</th>
                                 <th>Total Product</th>
                                 <th>Total Sell</th>
                                 <th>Status</th>
@@ -59,26 +66,22 @@ const SubcategoryList = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {allCategory && allCategory.length ? allCategory?.map((_category) => <tr>
-
-                                <td>{_category?.name}</td>
+                            {allSubcategory && allSubcategory.length ? allSubcategory?.map((_subcategory) => <tr>
+                                <td>{_subcategory?.name}</td>
                                 <td>
                                     <span className="ec-sub-cat-list">
                                         <span
                                             className="ec-sub-cat-count"
                                             title="Total Sub Categories"
+                                            style={{
+                                                backgroundColor: categoryColorForTag[_subcategory?.category?._id] || chroma.random()
+                                            }}
                                         >
-                                            {_category?.subcategories?.length}
+                                            {_subcategory?.category?.name}
                                         </span>
-                                        {
-                                            _category?.subcategories?.length ? _category?.subcategories?.map((_subcate) =>
-                                                <span className="ec-sub-cat-tag">{_subcate.name}</span>
-                                            ) :
-                                                <span className="ec-sub-cat-tag">-</span>
-                                        }
                                     </span>
                                 </td>
-                                <td>{_category.products.length}</td>
+                                <td>{_subcategory.products.length}</td>
                                 <td>0</td>
                                 <td>ACTIVE</td>
                                 <td>
@@ -89,14 +92,14 @@ const SubcategoryList = () => {
                                         <button
                                             type="button"
                                             className="btn btn-outline-success"
-                                            onClick={() => router.push(`/category-add?categoryId=${_category._id}`)}
+                                            onClick={() => router.push(`/category-add?categoryId=${_subcategory._id}`)}
                                         >
                                             Edit
                                         </button>
                                         <button
                                             type="button"
                                             className="btn btn-outline-success"
-                                            onClick={() => handleOpenDeleteModal(_category)}
+                                            onClick={() => handleOpenDeleteModal(_subcategory)}
                                         >Delete
                                         </button>
                                     </div>

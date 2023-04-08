@@ -16,16 +16,20 @@ function MyApp({ Component, pageProps }) {
     });
     const [allCategory, setAllCategory] = usePersistState("allCategory", []);
     const [allProducts, setAllProducts] = usePersistState("allProducts", []);
+    const [allSubcategory, setAllSubcategory] = usePersistState("allCategory", []);
+
     return <AppContext.Provider
         value={{
             state: {
                 auth: auth,
                 allCategory: allCategory,
-                allProducts: allProducts
+                allProducts: allProducts,
+                allSubcategory: allSubcategory
             },
             setAuth: setAuth,
             setAllCategory: setAllCategory,
             setAllProducts: setAllProducts,
+            setAllSubcategory: setAllSubcategory
         }}
     >
         <Head>

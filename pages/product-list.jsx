@@ -23,7 +23,7 @@ const ProductListPage = () => {
     }, []);
 
     return (
-        <ContainerWrapper >
+        <ContainerWrapper title="View Product" crumbName="Product" >
             <ProductList />
         </ContainerWrapper>
     );

@@ -22,7 +22,7 @@ const categoryList = () => {
     }, []);
 
     return (
-        <ContainerWrapper >
+        <ContainerWrapper title="View Category" crumbName="Category" >
             <CategoryList />
         </ContainerWrapper>
     );
