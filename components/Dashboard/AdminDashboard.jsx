@@ -1,4 +1,11 @@
+import AppContext from "../../AppContext";
+import { useContext, useEffect } from 'react';
+
 export default function AdminDashboard() {
+    const context = useContext(AppContext);
+    const { state, setRefreshData } = context;
+    const { allCategory, allSubcategory, allProducts } = state;
+
     return (
         <div className="ec-content-wrapper">
             <div className="content">
@@ -7,8 +14,8 @@ export default function AdminDashboard() {
                     <div className="col-xl-3 col-sm-6 p-b-15 lbl-card">
                         <div className="card card-mini dash-card card-1">
                             <div className="card-body">
-                                <h2 className="mb-1">1,503</h2>
-                                <p>Daily Signups</p>
+                                <h2 className="mb-1">{allProducts?.length}</h2>
+                                <p>Total Products</p>
                                 <span className="mdi mdi-account-arrow-left" />
                             </div>
                         </div>
@@ -16,8 +23,8 @@ export default function AdminDashboard() {
                     <div className="col-xl-3 col-sm-6 p-b-15 lbl-card">
                         <div className="card card-mini dash-card card-2">
                             <div className="card-body">
-                                <h2 className="mb-1">79,503</h2>
-                                <p>Daily Visitors</p>
+                                <h2 className="mb-1">{allCategory?.length}</h2>
+                                <p>Total Category</p>
                                 <span className="mdi mdi-account-clock" />
                             </div>
                         </div>
@@ -25,8 +32,8 @@ export default function AdminDashboard() {
                     <div className="col-xl-3 col-sm-6 p-b-15 lbl-card">
                         <div className="card card-mini dash-card card-3">
                             <div className="card-body">
-                                <h2 className="mb-1">15,503</h2>
-                                <p>Daily Order</p>
+                                <h2 className="mb-1">{allSubcategory?.length}</h2>
+                                <p>Total SubCategory</p>
                                 <span className="mdi mdi-package-variant" />
                             </div>
                         </div>
@@ -34,7 +41,7 @@ export default function AdminDashboard() {
                     <div className="col-xl-3 col-sm-6 p-b-15 lbl-card">
                         <div className="card card-mini dash-card card-4">
                             <div className="card-body">
-                                <h2 className="mb-1">$98,503</h2>
+                                <h2 className="mb-1">0</h2>
                                 <p>Daily Revenue</p>
                                 <span className="mdi mdi-currency-usd" />
                             </div>

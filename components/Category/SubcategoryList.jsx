@@ -10,12 +10,11 @@ import chroma from 'chroma-js';
 const SubcategoryList = () => {
     const router = useRouter()
     const context = useContext(AppContext);
-    const { allSubcategory } = context.state;
+    const { state, setRefreshData } = context;
+    const { allSubcategory } = state;
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedSubcategory, setSelectedSubcategory] = useState({});
-
-    console.log("allsubcate", allSubcategory)
 
     const handleOpenDeleteModal = (_cate) => {
         setIsOpen(true);
@@ -28,8 +27,10 @@ const SubcategoryList = () => {
             deleteSubcategory(id).then(({ data }) => {
                 if (data && data.success) {
                     toast.success(data.message)
+                    setRefreshData([false, true, false])
                 } else
                     toast.error(data.message);
+
                 setIsOpen(false)
             });
         } catch (e) {
@@ -66,7 +67,9 @@ const SubcategoryList = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {allSubcategory && allSubcategory.length ? allSubcategory?.map((_subcategory) => <tr>
+                            {allSubcategory && allSubcategory.length ? allSubcategory?.map((_subcategory) => <tr
+                                key={_subcategory._id}
+                            >
                                 <td>{_subcategory?.name}</td>
                                 <td>
                                     <span className="ec-sub-cat-list">
@@ -92,7 +95,7 @@ const SubcategoryList = () => {
                                         <button
                                             type="button"
                                             className="btn btn-outline-success"
-                                            onClick={() => router.push(`/category-add?categoryId=${_subcategory._id}`)}
+                                            onClick={() => router.push(`/subcategory-add?subcategoryId=${_subcategory._id}`)}
                                         >
                                             Edit
                                         </button>

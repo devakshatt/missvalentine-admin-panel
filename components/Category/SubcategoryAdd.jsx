@@ -12,34 +12,46 @@ const SubcategoryAddForm = () => {
     const context = useContext(AppContext);
     const { allCategory, allSubcategory } = context.state;
 
-    const selectedId = searchParams.get('categoryId');
+    const selectedId = searchParams.get('subcategoryId');
     const [selectedName, setSelectedName] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState({});
 
     useEffect(() => {
         if (selectedId) {
-            const cate = allSubcategory.find((_cate) => _cate._id == selectedId);
-            setSelectedName(cate.name)
+            const subcate = allSubcategory.find((_cate) => _cate._id == selectedId);
+            setSelectedName(subcate.name)
+            setSelectedCategory({
+                value: subcate.category._id,
+                label: subcate.category.name
+            })
         }
     }, []);
 
     const handleSubmit = (event) => {
+        if (!selectedName) {
+            toast.warn("Please select a subcategory name")
+            return;
+        }
+        if (!selectedCategory?.value) {
+            toast.warn("Please select parent category")
+            return;
+        }
         event.preventDefault();
         if (selectedId) {
             updateSubCategory(
                 {
                     name: selectedName,
+                    category: selectedCategory.value,
                 },
                 selectedId
             )
                 .then(({ data }) => {
                     if (data && data.success) {
                         toast.success(data.message);
-                        // Router.push('/admin/category');
+                        router.push("/subcategory-list");
                     } else {
                         toast.error(data.message);
                     }
-                    router.push("/category-list");
                     setSelectedName("");
                 })
                 .catch((err) => {
@@ -50,11 +62,12 @@ const SubcategoryAddForm = () => {
         } else {
             createSubcategory({
                 name: selectedName,
+                category: selectedCategory.value,
             })
                 .then(({ data }) => {
                     if (data && data.success) {
                         toast.success(data.message);
-                        // Router.push('/admin/category');
+                        router.push("/subcategory-list");
                     } else {
                         toast.error(data.message);
                     }
@@ -74,7 +87,7 @@ const SubcategoryAddForm = () => {
             <div className="card-body">
                 <div className="ec-cat-form">
                     <h4>Add New Sub Category</h4>
-                    <form>
+                    <div>
                         <div className="form-group row">
                             <label htmlFor="text" className="col-12 col-form-label">
                                 Name
@@ -184,7 +197,7 @@ const SubcategoryAddForm = () => {
                                 </button>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

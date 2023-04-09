@@ -35,11 +35,10 @@ const CategoryAddForm = () => {
                 .then(({ data }) => {
                     if (data && data.success) {
                         toast.success(data.message);
-                        // Router.push('/admin/category');
+                        router.push("/category-list");
                     } else {
                         toast.error(data.message);
                     }
-                    router.push("/category-list");
                     setSelectedName("");
                 })
                 .catch((err) => {
@@ -54,7 +53,7 @@ const CategoryAddForm = () => {
                 .then(({ data }) => {
                     if (data && data.success) {
                         toast.success(data.message);
-                        // Router.push('/admin/category');
+                        router.push("/category-list");
                     } else {
                         toast.error(data.message);
                     }

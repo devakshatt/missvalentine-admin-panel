@@ -1,6 +1,5 @@
 import { ToastContainer } from 'react-toastify';
 import Head from 'next/head'
-import { useState } from "react";
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.css'
 import "../styles/main.scss";
@@ -17,6 +16,8 @@ function MyApp({ Component, pageProps }) {
     const [allCategory, setAllCategory] = usePersistState("allCategory", []);
     const [allProducts, setAllProducts] = usePersistState("allProducts", []);
     const [allSubcategory, setAllSubcategory] = usePersistState("allCategory", []);
+    //categories,subcategories,products
+    const [refreshData, setRefreshData] = usePersistState("refreshData", [true, true, true]);
 
     return <AppContext.Provider
         value={{
@@ -24,12 +25,14 @@ function MyApp({ Component, pageProps }) {
                 auth: auth,
                 allCategory: allCategory,
                 allProducts: allProducts,
-                allSubcategory: allSubcategory
+                allSubcategory: allSubcategory,
+                refreshData: refreshData
             },
             setAuth: setAuth,
             setAllCategory: setAllCategory,
             setAllProducts: setAllProducts,
-            setAllSubcategory: setAllSubcategory
+            setAllSubcategory: setAllSubcategory,
+            setRefreshData: setRefreshData
         }}
     >
         <Head>

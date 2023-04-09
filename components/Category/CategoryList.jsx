@@ -9,7 +9,8 @@ import { useRouter } from 'next/router';
 const SubcategoryList = () => {
     const router = useRouter()
     const context = useContext(AppContext);
-    const { allCategory } = context.state;
+    const { state, setRefreshData } = context;
+    const { allCategory } = state;
 
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState({});
@@ -25,6 +26,7 @@ const SubcategoryList = () => {
             deleteCategory(id).then(({ data }) => {
                 if (data && data.success) {
                     toast.success(data.message)
+                    setRefreshData([true, false, false])
                 } else
                     toast.error(data.message);
                 setIsOpen(false)

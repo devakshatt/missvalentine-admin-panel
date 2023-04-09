@@ -20,10 +20,6 @@ export default function ContainerWrapper(props) {
                         </p>
                     </div>
                     <div>
-                        <a href="product-list.html" className="btn btn-primary">
-
-                            View All
-                        </a>
                     </div>
                 </div>
                 {props.children}
