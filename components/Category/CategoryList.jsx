@@ -14,8 +14,6 @@ const SubcategoryList = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState({});
 
-    console.log("allcate", allCategory)
-
     const handleOpenDeleteModal = (_cate) => {
         setIsOpen(true);
         setSelectedCategory(_cate)
@@ -59,7 +57,7 @@ const SubcategoryList = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {allCategory && allCategory.length ? allCategory?.map((_category) => <tr>
+                            {allCategory && allCategory.length ? allCategory?.map((_category) => <tr key={`cate_${_category._id}`}>
 
                                 <td>{_category?.name}</td>
                                 <td>

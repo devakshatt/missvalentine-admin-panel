@@ -13,11 +13,13 @@ const CategoryAddForm = () => {
 
     const selectedId = searchParams.get('categoryId');
     const [selectedName, setSelectedName] = useState("");
+    const [selectedSlug, setSelectedSlug] = useState("");
 
     useEffect(() => {
         if (selectedId) {
             const cate = allCategory.find((_cate) => _cate._id == selectedId);
-            setSelectedName(cate.name)
+            setSelectedName(cate.name);
+            setSelectedSlug(cate.slug)
         }
     }, []);
 
@@ -101,6 +103,7 @@ const CategoryAddForm = () => {
                                     className="form-control here set-slug"
                                     type="text"
                                     placeholder="This will be automatically generated."
+                                    value={selectedSlug}
                                 />
                                 <small>
                                     The “slug” is the URL-friendly version of the name. It is

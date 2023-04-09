@@ -4,6 +4,7 @@ import Navbar from "../Navbar";
 import Sidebar from "../Sidebar";
 import React, { useEffect, useContext } from 'react';
 import AppContext from "../../AppContext";
+import { setAuthHeaderAxios } from "../../utils/callApi";
 
 const withLayout = (PageComponent) => {
   return function WithPage({ ...props }) {
@@ -12,10 +13,12 @@ const withLayout = (PageComponent) => {
     const { state } = context;
 
     useEffect(() => {
-      console.log('withLayout', state);
       // on initial load - run auth check 
+      console.log('Inside Component Auth State', state.auth.authStatus)
       if (!state.auth.authStatus) {
         router.push('/');
+      } else {
+        setAuthHeaderAxios(state.auth.token);
       }
 
       // // on route change start - hide page content by setting authorized to false  

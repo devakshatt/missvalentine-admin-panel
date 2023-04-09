@@ -1,15 +1,61 @@
 import { useRouter } from "next/router";
-import { useState, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
+import AppContext from "../AppContext";
+import { getAllCategories, getAllProducts, getAllSubcategories } from "../services/adminApi";
 
 export default function Sidebar() {
-    const [expandItem, setExpandItem] = useState("none");
     const router = useRouter();
+    const context = useContext(AppContext);
+    const { setAllCategory, setAllSubcategory, setAllProducts } = context;
+
+    const [expandItem, setExpandItem] = useState("none");
+
     const handleNavigate = (endpoint) => {
         router.push(endpoint)
     };
 
     const handleSideBarClick = (_item) => {
         setExpandItem(s => s == _item ? "none" : _item)
+    }
+
+    const handleGetAllProducts = async () => {
+        console.log('Fetching all Products')
+        const response = await getAllProducts();
+        if (response.data) {
+            console.log('Fetched all products', response.data?.length)
+            setAllProducts(response.data.data);
+        }
+    }
+
+    const handleGetAllCategory = async () => {
+        console.log('Fetching all categories')
+        const response = await getAllCategories();
+        if (response.data && response.data.success) {
+            console.log('Fetched all categories', response.data?.length)
+            setAllCategory(response.data.data);
+        }
+    }
+
+    const handleGetAllSubcategory = async () => {
+        console.log('Fetching all subcategories')
+        const response = await getAllSubcategories();
+        if (response.data && response.data.success) {
+            console.log('Fetched all subcategories', response.data?.length)
+            setAllSubcategory(response.data.data);
+        }
+    }
+
+
+    useEffect(() => {
+        refreshData();
+    }, []);
+
+
+    const refreshData = () => {
+        handleGetAllCategory();
+        handleGetAllSubcategory();
+        handleGetAllProducts();
+
     }
 
     return (
@@ -30,6 +76,9 @@ export default function Sidebar() {
                             <a className="sidenav-item-link">
                                 <i className="mdi mdi-view-dashboard-outline" />
                                 <span onClick={() => handleNavigate("/dashboard")} className="nav-text">Dashboard</span>
+                                <i className="mdi mdi-refresh btn" onClick={refreshData} >
+
+                                </i>
                             </a>
                             <hr />
                         </li>
