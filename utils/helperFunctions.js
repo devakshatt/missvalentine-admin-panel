@@ -1,9 +1,9 @@
-const colours = {
+export const colours = {
     wine: '#902442',
     carrot: '#d78490',
     nude: '#d2bda2',
     skin: '#E4CDBE',
-    rani: '#fe67ca',
+    "rani": '#fe67ca',
 
     aliceblue: '#f0f8ff',
     antiquewhite: '#faebd7',

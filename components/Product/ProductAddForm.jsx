@@ -7,19 +7,22 @@ import ColorSelector from './ColorSelector';
 import { createProduct } from '../../services/adminApi';
 import { toast } from 'react-toastify';
 import { useContext, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import AppContext from '../../AppContext';
+import { colours } from '../../utils/helperFunctions';
 
 
 const animatedComponents = makeAnimated();
 
 const AddProductContainer = () => {
+    const searchParams = useSearchParams();
 
     //data
     const context = useContext(AppContext);
-    const { allCategory } = context.state;
+    const { allCategory, allProducts } = context.state;
+    const selectedId = searchParams.get('productId');
 
     //states
-    const [selectedId, setSelectedId] = useState("");
     const [selectedName, setSelectedName] = useState("");
     const [selectedSlug, setSelectedSug] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
@@ -36,12 +39,57 @@ const AddProductContainer = () => {
     const [selectedImageList, setSelectedImageList] = useState({});
     const [selectedImageListUrl, setSelectedImageListUrl] = useState({});
 
+
+    useEffect(() => {
+        if (selectedId) {
+            const product = allProducts.find((product) => product._id == selectedId);
+            if (product) {
+                console.log("product", product);
+                setSelectedName(product.name)
+                setSelectedSug(product.slug)
+                setSelectedPrice(product.price)
+                setSelectedQty(product.inStock)
+                setSelectedShortDescription(product.description)
+                setSelectedDescription(product.description)
+                setSelectedProductHidden(product.hidden)
+                // setSelectedImageList(product.images)
+                const _colors = product.colors.map(item => {
+                    return {
+                        label: item.toUpperCase(),
+                        value: item.toLowerCase(),
+                        color: colours[item.toLowerCase()]
+                    }
+                })
+                setSelectedColors(_colors)
+                const _sizes = product.sizes.map(item => {
+                    return {
+                        label: item,
+                        value: item
+                    }
+                })
+                setSelectedSizes(_sizes)
+                // const _subcate = product.subCategories.map(item => {
+                //     return {
+                //         label: item,
+                //         value: item
+                //     }
+                // })
+                // setSelectedSubcategory(_sizes)
+
+                setSelectedCategory({
+                    value: product.category._id,
+                    label: product.category.name
+                })
+            }
+        }
+    }, []);
+
     const handleImagesChange = (event) => {
         const index = event.target.name;
         const imagesList = { ...selectedImageList };
         imagesList[`image${index}`] = event.target.files[0];
         setSelectedImageList(imagesList);
-
+        console.log(`selectedImageList`, imagesList);
         if (event.target.files[0]) {
             const imagesListUrl = { ...selectedImageListUrl };
             imagesListUrl[`image${index}`] = URL.createObjectURL(event.target.files[0]);
@@ -88,12 +136,12 @@ const AddProductContainer = () => {
         formData.append('subCategories', JSON.stringify(selectedSubcategory.map(item => item.value)));
 
         console.log(formData);
-        // if (pid) {
-        //     formData.append('isEdit', true);
-        //     for (var i in inputData.images) {
-        //         formData.append('oldImages', JSON.stringify(inputData.images[i]));
-        //     }
-        // }
+        if (selectedId) {
+            formData.append('isEdit', true);
+            for (var i in selectedImageList.images) {
+                formData.append('oldImages', JSON.stringify(inputData.images[i]));
+            }
+        }
 
         //for Images
         const fileListAsArray = Array.from(Object.values(selectedImageList));

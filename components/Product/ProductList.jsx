@@ -3,8 +3,10 @@ import { deleteProduct } from '../../services/adminApi';
 import AppContext from '../../AppContext';
 import { useContext, useState } from 'react';
 import ConfirmationModal from '../ConfirmationModal';
+import { useRouter } from 'next/router';
 
 function ProductList(props) {
+    const router = useRouter()
     const context = useContext(AppContext);
     const { allProducts } = context.state;
 
@@ -81,6 +83,7 @@ function ProductList(props) {
                                                 <button
                                                     type="button"
                                                     className="btn btn-outline-success"
+                                                    onClick={() => router.push(`/product-add?productId=${product._id}`)}
                                                 >
                                                     Edit
                                                 </button>
