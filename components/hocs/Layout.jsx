@@ -38,7 +38,9 @@ const withLayout = (PageComponent) => {
     }, []);
 
 
-
+    if (!state.auth.authStatus) {
+      return <div>no auth</div>
+    }
     return (
       <div className="ec-header-fixed ec-sidebar-fixed ec-sidebar-light ec-header-light compact-spacing" id="body">
 

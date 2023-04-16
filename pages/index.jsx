@@ -22,11 +22,11 @@ export default function Login() {
     };
 
     useEffect(() => {
-        console.log('Login', state);
+        console.log('Login', state.auth, state.history);
 
         // redirect to home if already logged in
         if (state.auth.authStatus) {
-            router.push('/dashboard');
+            router.push(state.history || '/dashboard');
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps

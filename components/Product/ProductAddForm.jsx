@@ -22,7 +22,7 @@ const AddProductContainer = () => {
     const { allCategory, allProducts } = context.state;
     const selectedId = searchParams.get('productId');
 
-    //states
+    //statess
     const [selectedName, setSelectedName] = useState("");
     const [selectedSlug, setSelectedSug] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
@@ -53,6 +53,7 @@ const AddProductContainer = () => {
                 setSelectedDescription(product.description)
                 setSelectedProductHidden(product.hidden)
                 // setSelectedImageList(product.images)
+
                 const _colors = product.colors.map(item => {
                     return {
                         label: item.toUpperCase(),
