@@ -2,7 +2,7 @@ export const projectName = 'MissValentine';
 export const projectUrl = 'www.missvalentineinnerwear.com';
 export const projectInfoUrl = 'info@missvalentineinnerwear.com';
 export const projectAdminUrl = 'admin@missvalentineinnerwear.com';
-const isLocal = true;
+const isLocal = false;
 export const baseURL = isLocal
     ? 'http://localhost:5000/api'
     : 'https://missval.herokuapp.com/api';
